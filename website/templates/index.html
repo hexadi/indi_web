@@ -49,4 +49,18 @@
     {% endfor %}
   </tbody>
 </table>
+{% endif %}
+<h2>Latest Articles</h2>
+{% for article in articles %}
+<div class="card">
+  <img {% if article[0].image_url == "" %} src="/assets/indi_poster.png" {% else %} src={{ article[0].image_url }} {%
+    endif %} class="card-img-top" alt="" style="height: 20vh;object-position: center;object-fit: cover;">
+  <div class="card-body">
+    <h5 class="card-title">{{ article[0].title }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">Post By : {{ article[1] }}</h6>
+    <p class="card-text">{{ article[0].description[:100] }}</p>
+    <a href="/article/{{article[0].id}}" class="stretched-link"></a>
+  </div>
+</div>
+{% endfor %}
 {% endblock %}
