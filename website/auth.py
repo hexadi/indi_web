@@ -2,7 +2,9 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from .models import Article, Music, User, Vote
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user,login_required,current_user
+from sqlalchemy import extract
+from datetime import datetime
 auth = Blueprint('auth', __name__)
 
 @auth.route('/')
@@ -92,6 +94,34 @@ def register():
             login_user(new_user, remember=True)
             return redirect(url_for('auth.index'))
     return render_template("register.html", google_auth=None)
+
+# Vote Section
+
+
+@login_required
+@auth.route('/vote')
+def vote():
+    notes = db.session.query(Music, db.func.count(Vote.music_id)).filter(
+        Music.release >= '2021-01-01').join(Vote, isouter=True).group_by(Music.id).order_by(Music.title).all()
+    # notes = Music.query.join(Vote, Music.id==Vote.music_id).filter(Music.release >= '2021-01-01').all()
+    return render_template("vote.html", data=notes)
+
+
+@login_required
+@auth.route('/vote/<id>')
+def vote_create(id):
+    if (Vote.query.filter_by(user_id=current_user.id).filter(extract('month', Vote.date) >= datetime.utcnow().month,
+                                                             extract(
+                                                                 'year', Vote.date) >= datetime.utcnow().year,
+                                                             extract('day', Vote.date) >= datetime.utcnow().day).count() == 0):
+        new_vote = Vote(user_id=current_user.id, music_id=id)
+        db.session.add(new_vote)
+        db.session.commit()
+        flash("Vote Successfully!", category='success')
+    else:
+        flash("You Vote Already Today!", category='error')
+
+    return redirect(url_for('auth.vote'))
 
 # Search
 
