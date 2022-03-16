@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}New Post{% endblock %}
+{% block content %}
+<h2>New Post</h2>
+<form method="POST">
+  <div class="mb-3">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" class="form-control" id="title" name="title">
+  </div>
+  <div class="mb-3">
+    <label for="image_url" class="form-label">Image URL</label>
+    <input type="text" class="form-control" name="image_url">
+  </div>
+  <div class="mb-3">
+    <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+  var simplemde = new SimpleMDE();
+  simplemde.codemirror.on("change", function () {
+    document.querySelector("textarea#note").value = simplemde.value();
+  });
+</script>
+{% endblock %}
