@@ -2,10 +2,27 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from .models import Article, Music, User, Vote
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user,login_required,current_user
+from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import extract
 from datetime import datetime
+import json
+import requests
+import os
+from oauthlib.oauth2 import WebApplicationClient
 auth = Blueprint('auth', __name__)
+
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
+GOOGLE_DISCOVERY_URL = (
+    "https://accounts.google.com/.well-known/openid-configuration"
+)
+
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
+
+
+def get_google_provider_cfg():
+    return requests.get(GOOGLE_DISCOVERY_URL).json()
+
 
 @auth.route('/')
 def index():
@@ -60,6 +77,60 @@ def login():
     return render_template("login.html")
 
 
+@auth.route("/login/google")
+def login_google():
+    google_provider_cfg = get_google_provider_cfg()
+    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+    request_uri = client.prepare_request_uri(
+        authorization_endpoint,
+        redirect_uri="https://localhost:5000/login/callback",
+        scope=["email", "profile"],
+    )
+    return redirect(request_uri)
+
+
+@auth.route("/login/callback")
+def callback():
+    code = request.args.get("code")
+    google_provider_cfg = get_google_provider_cfg()
+    token_endpoint = google_provider_cfg["token_endpoint"]
+    token_url, headers, body = client.prepare_token_request(
+        token_endpoint,
+        authorization_response=request.url,
+        redirect_url=request.base_url,
+        code=code
+    )
+    token_response = requests.post(
+        token_url,
+        headers=headers,
+        data=body,
+        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+    )
+    client.parse_request_body_response(json.dumps(token_response.json()))
+    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
+    uri, headers, body = client.add_token(userinfo_endpoint)
+    userinfo_response = requests.get(uri, headers=headers, data=body)
+    if userinfo_response.json().get("email_verified"):
+        unique_id = userinfo_response.json()["sub"]
+        users_email = userinfo_response.json()["email"]
+        users_name = userinfo_response.json()["given_name"]
+        user_query = User.query.filter_by(email=users_email)
+        if (user_query.count() == 0):
+            return redirect(url_for("auth.register", google_auth=json.dumps({"google_id": unique_id, "email": users_email, "username": users_name})))
+        else:
+            if (user_query.first().google_id == None):
+                flash("Link With Email Success!", category='success')
+                user_query.first().google_id = unique_id
+                db.session.commit()
+            else:
+                flash("Login Successfully!", category='success')
+            login_user(user_query.first(), remember=True)
+            return redirect(url_for('auth.index'))
+    else:
+        flash("User email not available or not verified by Google.", category='error')
+        return redirect(url_for("auth.login"))
+
+
 @auth.route('/logout')
 def logout():
     logout_user()
@@ -70,6 +141,7 @@ def logout():
 @auth.route('/register', methods=["GET", "POST"])
 def register():
     if (request.method == "POST"):
+        google_id = request.form.get('google_id')
         email = request.form.get('email')
         username = request.form.get('username')
         password = request.form.get('password')
@@ -87,13 +159,17 @@ def register():
             flash("Passwords must be at least 7 characters.", category='error')
         else:
             new_user = User(email=email, username=username, password=generate_password_hash(
-                password, method='sha256'))
+                password, method='sha256'), google_id=google_id)
             db.session.add(new_user)
             db.session.commit()
             flash("Account created!.", category='success')
             login_user(new_user, remember=True)
             return redirect(url_for('auth.index'))
-    return render_template("register.html", google_auth=None)
+    if (request.args.get('google_auth') != None):
+        return render_template("register.html", google_auth=json.loads(request.args.get('google_auth')))
+    else:
+        return render_template("register.html", google_auth=None)
+
 
 # Vote Section
 
