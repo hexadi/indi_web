@@ -301,3 +301,19 @@ def new_music():
         flash("Access Denied.", category='error')
         return redirect(url_for('auth.index'))
 
+    
+@auth.route('/profile', methods=["GET", "POST"])
+def profile():
+    if (request.method == "POST"):
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(id=current_user.id).first()
+        user.username = username
+        if (password != ""):
+            user.password = generate_password_hash(password, method='sha256')
+        db.session.commit()
+        flash("Edit Complete!", category='success')
+        return redirect(url_for("auth.profile"))
+    else:
+        user = User.query.filter_by(id=current_user.id).first()
+        return render_template("profile.html", user=user)
