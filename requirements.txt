@@ -6,3 +6,4 @@ Flask>=2.0.2
 Werkzeug>=2.0.3
 Flask-Login>=0.5.0
 Flask-SQLAlchemy>=2.5.1
+pyOpenSSL>=22.0.0
