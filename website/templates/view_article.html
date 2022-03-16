@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+<h5>Post By : {{ post_by }}</h5>
+<img {% if post.image_url == "" %} src="/assets/indi_poster.png" {% else %} src={{ post.image_url }} {% endif %}
+    class="mb-2" alt="" style="width: 100%; height: 40vh; object-position: center;object-fit: cover;">
+{{ description|safe }}
+{% endblock %}
