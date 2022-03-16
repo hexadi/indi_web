@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h2>Search</h2>
+{% for item in items %}
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-1">
+      <img src={{ item.artwork }} class="card-img-top" alt="...">
+    </div>
+    <div class="col-md-9 d-flex justify-content-center">
+      <div class="card-body" style="margin: auto;">
+        <h5 class="card-title">{{item.title}}</h5>
+        <p class="card-text">{{item.artist}}</p>
+        <a href="/music/{{item.id}}" class="stretched-link"></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
