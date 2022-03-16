@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h2>Profile</h2>
+<form method="POST">
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="text" class="form-control" name="email" {% if user.email !=None %} value={{ user.email }} {% endif %}
+      disabled>
+  </div>
+  <div class="mb-3">
+    <label for="username" class="form-label">Username</label>
+    <input type="text" class="form-control" name="username" {% if user.username !=None %} value={{ user.username }} {%
+      endif %}>
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" class="form-control" name="password">
+  </div>
+  <button type="submit" class="btn btn-primary">Edit Profile</button>
+</form>
+{% endblock %}
