@@ -84,7 +84,7 @@ def login_google():
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri="https://localhost:5000/login/callback",
+        redirect_uri="https://indi-web.herokuapp.com/login/callback",
         scope=["email", "profile"],
     )
     return redirect(request_uri)
