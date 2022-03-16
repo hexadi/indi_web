@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<form method="POST">
+  <h1>Login</h1>
+  <a class="btn btn-outline-dark mb-2" href="/login/google" role="button" style="width:100%;text-transform:none">
+    <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+    Login with Google
+  </a>
+  <div class="mb-3">
+    <label for="email" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="email" name="email">
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" class="form-control" name="password">
+  </div>
+  <button style="width:100%" type="submit" class="btn btn-success">Login</button>
+</form>
+{% endblock %}
