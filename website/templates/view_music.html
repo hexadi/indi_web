@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}{{item.title}} : {{item.artist}}{% endblock %}
+{% block content %}
+<div class="row align-items-start mb-3">
+    <div class="col-3" style="min-width: 320px;">
+        <img src={{ item.artwork }}>
+    </div>
+    <div class="col d-flex" style="height: 300px;">
+        <div style="margin: auto 0;">
+            <h1>{{item.title}}</h1>
+            <h4>Artist : {{item.artist}}</h4>
+            <h5>Album : {{item.album}}</h5>
+            <a href={{item.spotify_link}}><img src="https://cdn.iconscout.com/icon/free/png-256/spotify-11-432546.png"
+                    width="32" height="32"></a>
+            <a href={{item.youtube_link}}><img
+                    src="https://cdn.iconscout.com/icon/free/png-256/youtube-music-4062799-3357685.png" width="32"
+                    height="32"></a>
+            {% if item.joox_link != None %}<a href={{item.joox_link}}><img
+                    src="https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/roeglqaxry2zgc8o1rit"
+                    width="32" height="32"></a>{% endif %}
+        </div>
+    </div>
+</div>
+{% if music_canvote and current_user.is_authenticated %}
+<div class="card">
+    <div class="card-body">
+        Vote to this song : <a class="btn btn-outline-dark" href="/vote/{{item.id}}">Vote</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
