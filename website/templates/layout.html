@@ -74,6 +74,7 @@
 </head>
 
 <body>
+
   <nav class="navbar navbar-expand-lg navbar-dark mb-3"
     style="background: rgb(108,179,250);background: linear-gradient(0deg, rgba(108,179,250,1) 0%, rgba(92,171,250,1) 50%);">
     <div class="container-fluid">
@@ -89,8 +90,19 @@
             <a class="nav-link" style="color: rgba(255,255,255,.5)" href="/profile">Welcome,
               {{current_user.username}}</a>
           </li>
+          {% if current_user.role == "Admin" %}
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="/vote">Vote</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="/music">Music</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/article">Articles</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
@@ -132,14 +144,20 @@
           <a href="/" class="d-flex align-items-center mb-3 link-dark text-decoration-none">
             <img src="/assets/indi_logo.png" class="bi me-2" width="100"></img>
           </a>
-          <p class="text-muted">Â© Indi 2021</p>
+          <p class="text-muted">© Indi 2021</p>
         </div>
-        <div class="col"></div>
+
+        <div class="col">
+
+        </div>
+
         <div class="col">
           <h5>Section</h5>
           <ul class="nav flex-column">
             <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-muted">Index</a></li>
+            <li class="nav-item mb-2"><a href="/vote" class="nav-link p-0 text-muted">Vote</a></li>
             <li class="nav-item mb-2"><a href="/music" class="nav-link p-0 text-muted">Music</a></li>
+            <li class="nav-item mb-2"><a href="/article" class="nav-link p-0 text-muted">Articles</a></li>
           </ul>
         </div>
       </footer>
