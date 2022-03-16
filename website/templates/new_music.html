@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}New Music{% endblock %}
+{% block content %}
+<h2>New Music</h2>
+<form method="POST">
+    <div class="mb-2">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" name="title">
+    </div>
+    <div class="mb-2">
+        <label for="artist" class="form-label">Artist</label>
+        <input type="text" class="form-control" name="artist">
+    </div>
+    <div class="mb-2">
+        <label for="album" class="form-label">Album</label>
+        <input type="text" class="form-control" name="album">
+    </div>
+    <div class="mb-2">
+        <label for="artwork" class="form-label">Artwork Image</label>
+        <input type="text" class="form-control" name="artwork">
+    </div>
+    <div class="mb-2">
+        <label for="youtube_link" class="form-label">Youtube Music Link</label>
+        <input type="text" class="form-control" name="youtube_link">
+    </div>
+    <div class="mb-2">
+        <label for="spotify_link" class="form-label">Spotify Link</label>
+        <input type="text" class="form-control" name="spotify_link">
+    </div>
+    <div class="mb-2">
+        <label for="joox_link" class="form-label">Joox Link</label>
+        <input type="text" class="form-control" name="joox_link">
+    </div>
+    <div class="mb-2">
+        <label for="joox_link" class="form-label">Release</label>
+        <input type="date" class="form-control" name="release">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
