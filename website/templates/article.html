@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Articles{% endblock %}
+{% block content %}
+<div class="row g-0">
+  <div class="col">
+    <h2>Articles</h2>
+  </div>
+  {% if current_user.role == "Admin" or current_user.role == "Writer" %}
+  <div class="col" style="max-width: 120px;"><a href="/article/new" class="btn btn-outline-light">New Article</a></div>
+  {% endif %}
+</div>
+{% for article in articles %}
+<div class="card">
+  {% if article[0].image_url == "" %}
+  <img src="/assets/indi_poster.png" class="card-img-top" alt=""
+    style="height: 20vh;object-position: center;object-fit: cover;">
+  {% else %}
+  <img src={{ article[0].image_url }} class="card-img-top" alt=""
+    style="height: 20vh;object-position: center;object-fit: cover;">
+  {% endif %}
+  <div class="card-body">
+    <h5 class="card-title">{{ article[0].title }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">Post By : {{ article[1] }}</h6>
+    <p class="card-text">{{ article[0].description[:50] }}</p>
+    <a href="/article/{{article[0].id}}" class="stretched-link"></a>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
