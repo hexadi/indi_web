@@ -9,6 +9,7 @@ import json
 import requests
 import os
 from oauthlib.oauth2 import WebApplicationClient
+from markdown import markdown
 auth = Blueprint('auth', __name__)
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
@@ -208,3 +209,39 @@ def search():
     search_result = Music.query.filter(Music.title.like("%{}%".format(q)) | Music.album.like(
         "%{}%".format(q)) | Music.artist.like("%{}%".format(q))).all()
     return render_template("search.html", items=search_result)
+
+# Articles
+
+
+@auth.route('/article')
+def article():
+    articles = db.session.query(Article, User.username).join(
+        User, isouter=True).group_by(Article.id).limit(5).all()
+    return render_template("article.html", articles=articles)
+
+
+@auth.route('/article/<id>')
+def article_read(id):
+    article = Article.query.filter_by(id=id).first()
+    post_by = User.query.filter_by(id=article.user_id).first().username
+    return render_template("view_article.html", post=article, post_by=post_by, description=markdown(article.description))
+
+
+@auth.route('/article/new', methods=["GET", "POST"])
+def new_post():
+    if (current_user.role == "Admin" or current_user.role == "Writer"):
+        if (request.method == "POST"):
+            title = request.form.get('title')
+            note = request.form.get('note')
+            image_url = request.form.get('image_url')
+            new_article = Article(
+                title=title, description=note, image_url=image_url, user_id=current_user.id)
+            db.session.add(new_article)
+            db.session.commit()
+            flash("Post Complete!", category='success')
+            return redirect(url_for("auth.index"))
+        else:
+            return render_template("new_post.html")
+    else:
+        flash("Access Denied.", category='error')
+        return redirect(url_for('auth.index'))
