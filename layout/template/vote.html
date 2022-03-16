@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}Vote{% endblock %}
+{% block content %}
+<h2>Vote</h2>
+{% for item in data %}
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-1">
+      <img src={{ item[0].artwork }} class="card-img-top" alt="...">
+    </div>
+    <div class="col d-flex justify-content-center">
+      <div class="card-body" style="margin: auto;">
+        <h5 class="card-title">{{item[0].title}}</h5>
+        <a href="/music/{{item[0].id}}" class="stretched-link"></a>
+        <p class="card-text">{{item[0].artist}}</p>
+      </div>
+    </div>
+    <div class="col-md-1 d-flex justify-content-center text-center">
+      {% if item[1] > 0 %}
+      <p style="margin: auto;">{{ item[1] }} Vote</p>
+      {% endif %}
+    </div>{% if current_user.is_authenticated %}
+    <div class="col-md-1 d-flex justify-content-center text-center">
+      <a class="btn btn-outline-dark" style="margin: auto;z-index: 2;position: relative;"
+        href="/vote/{{item[0].id}}">Vote</a>
+    </div>{% endif %}
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
