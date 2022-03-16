@@ -245,3 +245,59 @@ def new_post():
     else:
         flash("Access Denied.", category='error')
         return redirect(url_for('auth.index'))
+
+# Admin
+
+
+@login_required
+@auth.route('/admin')
+def admin():
+    if (current_user.role == "Admin"):
+        all_user = User.query.all()
+        return render_template("admin.html", users=all_user)
+    else:
+        flash("Access Denied.", category='error')
+        return redirect(url_for('auth.index'))
+
+
+@login_required
+@auth.route('/admin/add_user', methods=["POST"])
+def add_user():
+    if (current_user.role == "Admin"):
+        id = request.form['id']
+        user = User.query.filter_by(id=id).first()
+        user.username = request.form['username']
+        user.email = request.form['email']
+        user.role = request.form['role']
+        db.session.commit()
+        flash("Complete", category='success')
+        return redirect(url_for('auth.admin'))
+    else:
+        flash("Access Denied.", category='error')
+        return redirect(url_for('auth.index'))
+
+
+@auth.route('/music/new', methods=["GET", "POST"])
+def new_music():
+    if (current_user.role == "Admin"):
+        if (request.method == "POST"):
+            title = request.form.get('title')
+            artist = request.form.get('artist')
+            album = request.form.get('album')
+            artwork = request.form.get('artwork')
+            youtube_link = request.form.get('youtube_link')
+            spotify_link = request.form.get('spotify_link')
+            joox_link = request.form.get('joox_link')
+            release = datetime.strptime(request.form.get('release'),"%Y-%m-%d")
+            new_music = Music(title=title, artist=artist, album=album, artwork=artwork,
+                              youtube_link=youtube_link, spotify_link=spotify_link, joox_link=joox_link, release=release)
+            db.session.add(new_music)
+            db.session.commit()
+            flash("Add Music Complete!", category='success')
+            return redirect(url_for("auth.music"))
+        else:
+            return render_template("new_music.html")
+    else:
+        flash("Access Denied.", category='error')
+        return redirect(url_for('auth.index'))
+
