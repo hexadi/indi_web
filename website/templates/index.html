@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+{% if data %}
+<h1 class="text-center">Top Votes</h1>
+<div class="row g-0 top-chart">
+  <div class="col"
+    style="margin-top: auto;height: 90%; background-color: #D7D7D7;transform: rotate(0); border-radius: 10px 0 0 10px;">
+    <h2>2 [{{data[1][1]}} Vote]</h3><img src={{ data[1][0].artwork }}>
+      <h3>{{data[1][0].title}}</h3>
+      <h3>{{data[1][0].artist}}</h3>
+      <a href="/music/{{ data[1][0].id }}" class="stretched-link"></a>
+  </div>
+  <div class="col" style="height: 100%; background-color: #C9B037;transform: rotate(0);border-radius: 10px 10px 0 0;">
+    <h2>1 [{{data[0][1]}} Vote]</h3><img src={{ data[0][0].artwork }}>
+      <h3>{{data[0][0].title}}</h3>
+      <h3>{{data[0][0].artist}}</h3>
+      <a href="/music/{{ data[0][0].id }}" class="stretched-link"></a>
+  </div>
+  <div class="col"
+    style="margin-top: auto;height: 80%; background-color: #6A3805;transform: rotate(0);border-radius: 0 10px 10px 0;">
+    <h2 style="color:white;">3 [{{data[2][1]}} Vote]</h3><img src={{ data[2][0].artwork }}>
+      <h3 style="color:white;">{{data[2][0].title}}</h3>
+      <h3 style="color:white;">{{data[2][0].artist}}</h3>
+      <a href="/music/{{ data[2][0].id }}" class="stretched-link"></a>
+  </div>
+</div>
+<table class="table">
+  <tbody>
+    {% for i in range(3,data|length) %}
+    <tr style="transform: rotate(0);">
+      <td>
+        <h5 style="text-align: center;">{{ i + 1 }}</h5>
+      </td>
+      <td style="width: 88px;">
+        <img src={{ data[i][0].artwork }} width="88" alt="...">
+      </td>
+      <td>
+        <h5>{{data[i][0].title}}</h5>
+        <p>{{data[i][0].artist}}</p>
+      </td>
+      <td>
+        {% if data[i][1] > 0 %}
+        <p style="text-align: end;">{{ data[i][1] }} Vote</p>
+        {% endif %}
+        <a href="/music/{{ data[i][0].id }}" class="stretched-link"></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
